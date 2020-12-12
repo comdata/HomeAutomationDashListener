@@ -102,7 +102,7 @@ public class DashButtonService {
 			if (((filterTime.getTime()) + 1000) < (new Date()).getTime()) {
 				timeFilter.put(mac, new Date());
 				System.out.println("sending event: " + mac);
-				mqttSender.doSendSyncMQTTMessage("dhcpEvent/mac", new DashButtonEvent(mac));
+				mqttSender.doSendSyncMQTTMessage("dhcpEvent/"+mac, new DashButtonEvent(mac));
 				System.out.println("event sent: " + mac);
 				// LogManager.getLogger(this.getClass()).debug("send dashbutton event");
 			}
