@@ -1,4 +1,4 @@
-name: Java CI
+name: Java CI native x86_64
 on: 
   push:
     branches: main
@@ -22,7 +22,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Build with Maven
-        run: mvn -B package -DskipTests=true --file pom.xml
+        run: ./mvnw package -Pnative -Dquarkus.native.container-build=true
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -39,10 +39,10 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          file: ./Dockerfile.native
+          platforms: linux/amd64
           push: true
           tags: |
-             ghcr.io/comdata/homeautomationdashlistener:latest
+             ghcr.io/comdata/homeautomationdashlistener-native:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
