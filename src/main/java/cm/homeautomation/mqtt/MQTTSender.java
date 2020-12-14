@@ -6,13 +6,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hivemq.client.mqtt.MqttClient;
-import com.hivemq.client.mqtt.datatypes.MqttQos;
-import com.hivemq.client.mqtt.mqtt3.Mqtt3AsyncClient;
-import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish;
 
 import io.quarkus.vertx.ConsumeEvent;
 import io.vertx.core.eventbus.EventBus;
@@ -26,7 +27,7 @@ import io.vertx.core.eventbus.EventBus;
 @ApplicationScoped
 public class MQTTSender {
 
-	private Mqtt3AsyncClient publishClient = null;
+	private MqttClient publishClient = null;
 
 	@ConfigProperty(name = "mqtt.host")
 	String host;
@@ -41,23 +42,31 @@ public class MQTTSender {
 	}
 
 	private void initClient() {
-		if (publishClient == null) {
+		try {
+			if (publishClient == null) {
 
-			publishClient = MqttClient.builder().useMqttVersion3().identifier(UUID.randomUUID().toString())
-					.serverHost(host).serverPort(port).automaticReconnect().applyAutomaticReconnect().buildAsync();
+				UUID uuid = UUID.randomUUID();
+				String randomUUIDString = uuid.toString();
 
-			publishClient.connect().whenComplete((connAck, throwable) -> {
-				if (throwable != null) {
-					// Handle connection failure
-				} else {
+				publishClient = new MqttClient("tcp://" + host + ":" + port, "HomeAutomation/" + randomUUIDString);
 
-				}
-			});
+			}
+
+			MqttConnectOptions connOpt = new MqttConnectOptions();
+			connOpt.setAutomaticReconnect(true);
+			connOpt.setCleanSession(false);
+			connOpt.setKeepAliveInterval(60);
+			connOpt.setConnectionTimeout(30);
+			connOpt.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
+
+			if (!publishClient.isConnected()) {
+				publishClient.connect(connOpt);
+			}
+		} catch (MqttException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
-		if (!publishClient.getState().isConnectedOrReconnect()) {
-			publishClient.connect();
-		}
 	}
 
 	public void sendMQTTMessage(String topic, String messagePayload) {
@@ -90,12 +99,22 @@ public class MQTTSender {
 
 	@ConsumeEvent(value = "MQTTSendEvent", blocking = true)
 	public void send(MQTTSendEvent mqttSendEvent) {
-		String topic = mqttSendEvent.getTopic();
-		String messagePayload = mqttSendEvent.getPayload();
+		try {
+			String topic = mqttSendEvent.getTopic();
+			String messagePayload = mqttSendEvent.getPayload();
 
-		initClient();
-		Mqtt3Publish publishMessage = Mqtt3Publish.builder().topic(topic).qos(MqttQos.AT_LEAST_ONCE)
-				.payload(messagePayload.getBytes()).build();
-		publishClient.publish(publishMessage);
+			initClient();
+			MqttMessage message = new MqttMessage();
+			message.setQos(1);
+			message.setPayload(messagePayload.getBytes());
+
+			publishClient.publish(topic, message);
+		} catch (MqttPersistenceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MqttException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
