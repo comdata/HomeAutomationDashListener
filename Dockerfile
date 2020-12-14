@@ -27,7 +27,7 @@ RUN mkdir -p /source/.mvn/wrapper/
 #COPY .mvn/wrapper/maven-wrapper.properties /source/.mvn/wrapper/maven-wrapper.properties
 #WORKDIR /source
 #RUN ./mvnw package -Pnative -Dquarkus.native.container-build=true
-RUN cp target/*-runner /runner
+COPY target/*-runner.jar /app.jar
 
-ENTRYPOINT ["sh", "-c", "/runner" ]
+ENTRYPOINT ["sh", "-c", "java -jar /app.jar" ]
 
