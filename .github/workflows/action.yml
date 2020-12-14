@@ -21,8 +21,8 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-#      - name: Build with Maven
-#        run: ./mvnw package -Pnative -Dquarkus.native.container-build=true
+      - name: Build with Maven
+        run: ./mvnw package -Pnative -Dquarkus.native.container-build=true
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -40,9 +40,10 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          platforms: linux/amd64
           push: true
           tags: |
              ghcr.io/comdata/homeautomationdashlistener:latest
+# ,linux/arm64,linux/arm/v7,linux/arm/v6
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

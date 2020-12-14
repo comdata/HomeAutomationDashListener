@@ -23,10 +23,10 @@ RUN mkdir /source
 RUN mkdir -p /source/.mvn/wrapper/
 
 
-COPY * /source/
-COPY .mvn/wrapper/maven-wrapper.properties /source/.mvn/wrapper/maven-wrapper.properties
-WORKDIR /source
-RUN ./mvnw package -Pnative -Dquarkus.native.container-build=true
+#COPY * /source/
+#COPY .mvn/wrapper/maven-wrapper.properties /source/.mvn/wrapper/maven-wrapper.properties
+#WORKDIR /source
+#RUN ./mvnw package -Pnative -Dquarkus.native.container-build=true
 RUN cp target/*-runner /runner
 
 ENTRYPOINT ["sh", "-c", "/runner" ]
