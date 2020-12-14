@@ -20,7 +20,7 @@ ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jb
 ENV AB_ENABLED=jmx_exporter
 
 COPY src src
-COPY mvnw nvnw
+COPY mvnw mvnw
 RUN ./mvnw package -Pnative -Dquarkus.native.container-build=true
 
 COPY target/lib/* /lib/
