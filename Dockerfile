@@ -21,7 +21,7 @@ ENV AB_ENABLED=jmx_exporter
 
 RUN mkdir /source
 
-COPY * /source
+COPY * /source/
 WORKDIR /source
 RUN ./mvnw package -Pnative -Dquarkus.native.container-build=true
 RUN cp target/*-runner /runner
