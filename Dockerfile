@@ -19,7 +19,9 @@ FROM ghcr.io/comdata/docker-image:latest
 ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV AB_ENABLED=jmx_exporter
 
-RUN mvnw package -Pnative -Dquarkus.native.container-build=true
+COPY src src
+COPY mvnw nvnw
+RUN ./mvnw package -Pnative -Dquarkus.native.container-build=true
 
 COPY target/lib/* /lib/
 COPY target/*-runner /runner
