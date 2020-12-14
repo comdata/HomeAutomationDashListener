@@ -19,10 +19,10 @@ FROM ghcr.io/comdata/docker-image:latest
 ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV AB_ENABLED=jmx_exporter
 
-RUN mkdir source
+RUN mkdir /source
 
-COPY * source
-WORKDIR source
+COPY * /source
+WORKDIR /source
 RUN ./mvnw package -Pnative -Dquarkus.native.container-build=true
 RUN cp target/*-runner /runner
 
