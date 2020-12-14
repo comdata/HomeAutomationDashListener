@@ -1,7 +1,7 @@
 name: Java CI native x86_64
 on: 
   push:
-    branches: main
+    branches: main1
 jobs:
   build:
     runs-on: ubuntu-latest
