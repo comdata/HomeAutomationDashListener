@@ -20,8 +20,11 @@ ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jb
 ENV AB_ENABLED=jmx_exporter
 
 RUN mkdir /source
+RUN mkdir /source/.mvn/wrapper/
+
 
 COPY * /source/
+COPY .mvn/wrapper/maven-wrapper.properties /source/.mvn/wrapper/maven-wrapper.properties
 WORKDIR /source
 RUN ./mvnw package -Pnative -Dquarkus.native.container-build=true
 RUN cp target/*-runner /runner
