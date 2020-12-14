@@ -21,6 +21,7 @@ ENV AB_ENABLED=jmx_exporter
 
 COPY src src
 COPY .mvn .mvn
+COPY pom.xml pom.xml
 COPY mvnw mvnw
 RUN ./mvnw package -Pnative -Dquarkus.native.container-build=true
 
