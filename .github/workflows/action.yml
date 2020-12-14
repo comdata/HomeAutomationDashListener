@@ -44,8 +44,8 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/arm64,linux/arm/v7,linux/arm/v6
-          push: false
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          push: true
           tags: |
              ghcr.io/comdata/homeautomationdashlistener:latest
       - name: Build and push to GHCRIO native
@@ -57,6 +57,6 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-             ghcr.io/comdata/homeautomationdashlistener:latest
+             ghcr.io/comdata/homeautomationdashlistener-native:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
