@@ -48,15 +48,15 @@ jobs:
           push: true
           tags: |
              ghcr.io/comdata/homeautomationdashlistener:latest
-      - name: Build and push to GHCRIO native
-        id: docker_build_native
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Dockerfile.native
-          platforms: linux/amd64
-          push: true
-          tags: |
-             ghcr.io/comdata/homeautomationdashlistener-native:latest
+#      - name: Build and push to GHCRIO native
+#        id: docker_build_native
+#        uses: docker/build-push-action@v2
+#        with:
+#          context: .
+#          file: ./Dockerfile.native
+#          platforms: linux/amd64
+#          push: true
+#          tags: |
+#             ghcr.io/comdata/homeautomationdashlistener-native:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
