@@ -26,11 +26,12 @@ COPY target/*-runner /runner
 COPY entrypoint.java.sh entrypoint.java.sh
 COPY entrypoint.native.sh entrypoint.native.sh
 
-RUN	apkArch="$(apk --print-arch)"; \
-	case "$apkArch" in \
-		x86) cp entrypoint.native.sh  /entrypoint.sh;; \
-		*) cp entrypoint.java.sh  /entrypoint.sh;;  \
-	esac; \	
+RUN     arch="$(uname -m)"; \
+        case "$arch" in \
+                x86_64) cp entrypoint.native.sh  /entrypoint.sh;; \
+                *) cp entrypoint.java.sh  /entrypoint.sh;;  \
+        esac;
+
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["sh", "-c", "/entrypoint.sh" ]
